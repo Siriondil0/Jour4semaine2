@@ -5,4 +5,5 @@ AllCops:
   DisplayStyleGuide: true
   DisplayCopNames: true
   Exclude:
-- 'Gemfile'
+    - 'Gemfile'
+
