@@ -19,6 +19,9 @@ def get_price_money(url)
   # on récupère les urls contenues dans la classe lientxt
 end
 
+def create_hash_name_price (name,price)
+  name.zip(price).map{|name, price| {Nom: name, Prix: price}}
+end
 
-puts get_name_money("https://coinmarketcap.com/all/views/all/")
-puts get_price_money("https://coinmarketcap.com/all/views/all/")
+address="https://coinmarketcap.com/all/views/all/"
+puts create_hash_name_price(get_name_money(address),get_price_money(address))

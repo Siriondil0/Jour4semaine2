@@ -37,10 +37,8 @@ def get_all_email_and_ulrs_of_val_doise(url)
   urls_val_doise.each { |x| x.gsub!(/.\/95/, general_url) }
   urls_val_doise.each { |x| email_town << get_the_email_of_a_townhal_from_its_webpage(x) }
   # on récupère les emails de chaque villes
-  town.zip(email_town).map{|town, email| {date: town, value: email}}
-
-
-  # on met les emails dans un hash {ville=>email de la ville}
+  town.zip(email_town).map{|town, town_email| {name: town, email: town_email}}
+  # on met les emails dans un hash {name =>ville, email=>email de la ville}
 end
 
 #perform les 3 autres fonctions
@@ -49,9 +47,7 @@ def perform
   print get_all_the_urls_of_val_doise_townhalls("http://annuaire-des-mairies.com/val-d-oise.html")
   puts
   puts "La dernière fonction met environ une minute à s'executer, désolé de l'attente"
-  hash= get_all_email_and_ulrs_of_val_doise("http://annuaire-des-mairies.com/val-d-oise.html")
-  town_email=Email_town.new
-
+  puts get_all_email_and_ulrs_of_val_doise("http://annuaire-des-mairies.com/val-d-oise.html")
 end
 
 perform
