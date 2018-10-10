@@ -5,7 +5,6 @@ require 'nokogiri'
 require 'open-uri'
 require 'rubocop'
 
-Email_town=Struct.new(:name, :email)
 # récupérer l'email d'une ville
 def get_the_email_of_a_townhal_from_its_webpage(url)
   page = Nokogiri::HTML(open(url))
