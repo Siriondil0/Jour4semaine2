@@ -19,5 +19,6 @@ def get_price_money(url)
   # on récupère les urls contenues dans la classe lientxt
 end
 
+
 puts get_name_money("https://coinmarketcap.com/all/views/all/")
 puts get_price_money("https://coinmarketcap.com/all/views/all/")
