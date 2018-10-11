@@ -8,16 +8,18 @@ require 'rubocop'
 # récupérer l'email d'une ville
 def get_the_email_of_a_townhal_from_its_webpage(url)
   page = Nokogiri::HTML(open(url))
-  link = page.xpath('/html/body/div/main/section[2]/div/table/tbody/tr[4]/td[2]')
   # les pages étants identiques, on a pris le xpath précis de l'adresse mail d'une ville
+  link = page.xpath('/html/body/div/main/section[2]/div/table/tbody/tr[4]/td[2]')
+  # on enlève les <td> </td> entourant les emails
   link.to_s.gsub!(/<\/td>/, '').gsub!(/<td>/, '')
 end
 
 # récuperer l'url des villes du val d'oise.map { |link| link['href'] }
 def get_all_the_urls_of_val_doise_townhalls(url)
   page = Nokogiri::HTML(open(url))
-  page.css('.lientxt').map { |link| link['href'] }
   # on récupère.map { |link| link['href'] } les urls contenues dans la classe lientxt
+  page.css('.lientxt').map { |link| link['href'] }
+  
 end
 
 # transforme les string de array_of_url du format ./95/maville.html à maville

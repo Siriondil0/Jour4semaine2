@@ -5,29 +5,33 @@ require 'nokogiri'
 require 'open-uri'
 require 'rubocop'
 
-
+# Récupère un tableau contenant le nom des monnaies
 def get_name_money(url)
   page = Nokogiri::HTML(open(url))
+  # on récupère le texte contenu dans la classe currency-name-container link-secondary
   page.xpath('//a[@class="currency-name-container link-secondary"]').map { |link| link.text }
-  # on récupère les urls contenues dans la classe lientxt
-
 end
 
+# Récupère un tableau contenant le prix des monnaies
 def get_price_money(url)
   page = Nokogiri::HTML(open(url))
+  # on récupère le texte contenu dans la classe price
   page.css('.price').map { |link| link.text }
-  # on récupère les urls contenues dans la classe lientxt
+  
 end
 
+#cree un hash avec les tableaux name et price
 def create_hash_name_price (name,price)
   name.zip(price).map{|name, price| {Nom: name, Prix: price}}
 end
 
+# perform les fonctions
 def perform
   address="https://coinmarketcap.com/all/views/all/"
   puts create_hash_name_price(get_name_money(address),get_price_money(address))
 end
 
+# exécute la fonction une fois par heure
 def every_minutes_excecute 
   while true do
     t = Time.now

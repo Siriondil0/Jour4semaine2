@@ -8,7 +8,7 @@ require 'rubocop'
 # récupère le nom et prénom d'un député à partir de sa page
 def get_name_of_a_deputee(page)
   name = page.css('h1').text
-  #on enlève les accents pour éciter les charactères spéciaux dans les hash et on split name
+  #on enlève les accents pour éviter les charactères spéciaux dans les hash et on split name
   name = name.gsub(/É/,'E').gsub(/[ëêéè]/, 'e').gsub(/À/, 'A').gsub(/ï/, 'i').gsub(/ö/, 'o').split
   first_name = name[1]
   #les noms de familles peuvent être séparés par des espaces, on les récupères avec le test ci après
@@ -31,20 +31,21 @@ def get_the_name_and_email_of_a_depute(url)
     link = page.xpath('/html/body/div[3]/div/div/div/section[1]/div/article/div[3]/div/dl/dd[3]/ul/li/a').map { |link| link['href'] }
   end
   if link[0].class == NilClass
-    email="Pas d'email renseigne"
+    email = "Pas d'email renseigne"
   else
-    email=link[0].gsub(/mailto:/, '') 
+    email = link[0].gsub(/mailto:/, '') 
   end
   {:first_name =>name[0], :last_name=>name[1],:email=>email}
 end
 
-# récuperer l'url des deputee
+# récuperer l'url de chaque deputee dans un tableau
 def get_all_the_urls_of_all_deputee(url)
   url_general="http://www2.assemblee-nationale.fr"
   page = Nokogiri::HTML(open(url))
-  link=page.xpath('//div[@class="clearfix col-container"]')
-  link=link.css('a').map { |link| url_general+link['href'] }
-  # on récupère les urls contenues dans la classe lientxt et on les mets dans le bon format
+  #on récupère le contenu de la classe clearfix col-container (qui est un tableau contenant des liens)
+  link = page.xpath('//div[@class="clearfix col-container"]')
+  # on récupère les urls contenues dans les liens du tableau  et on les mets dans le bon format
+  link = link.css('a').map { |link| url_general + link['href'] }
 end
 
 
@@ -57,6 +58,5 @@ def get_all_names_and_email_of_deputee(url)
   all_deputee
 end
 
-#puts get_the_name_and_email_of_a_depute("http://www2.assemblee-nationale.fr/deputes/fiche/OMC_PA720538")
 puts "L'execution peut prendre quelques minutes, merci de votre patience "
 puts get_all_names_and_email_of_deputee("http://www2.assemblee-nationale.fr/deputes/liste/alphabetique")
