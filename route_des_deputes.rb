@@ -5,18 +5,37 @@ require 'nokogiri'
 require 'open-uri'
 require 'rubocop'
 
+# récupère le nom et prénom d'un député à partir de sa page
+def get_name_of_a_deputee(page)
+  name = page.css('h1').text
+  #on enlève les accents pour éciter les charactères spéciaux dans les hash et on split name
+  name = name.gsub(/É/,'E').gsub(/[ëêéè]/, 'e').gsub(/À/, 'A').gsub(/ï/, 'i').gsub(/ö/, 'o').split
+  first_name = name[1]
+  #les noms de familles peuvent être séparés par des espaces, on les récupères avec le test ci après
+  if name[3]
+    last_name = name[2] + " " + name[3..-1].join(" ")
+  else
+    last_name = name[2]
+  end 
+  [first_name, last_name]
+end
 
 # récupère le prénom nom et email d'un député
 def get_the_name_and_email_of_a_depute(url)
   page = Nokogiri::HTML(open(url))
-  name = page.css('h1').text
-  name=name.split
-  first_name=name[1]
-  last_name=name[2]
+  name = get_name_of_a_deputee(page)
+  # Il existe trois sortes de pages de députés: ceux avec un email et une collaboratrice
+  #, ceux avec un email et pas de collaboratrice et ceux sans email. On teste chacune de ces possibilités
   link = page.xpath('/html/body/div[3]/div/div/div/section[1]/div/article/div[3]/div/dl/dd[4]/ul/li/a').map { |link| link['href'] }
-  # les pages étants identiques, on a pris le xpath précis de l'adresse mail d'un député
-  email=link.to_s.gsub!(/mailto:/, '').gsub!(/["\[\]]/,'')
-  {:first_name =>first_name,:last_name=>last_name,:email=>email}
+  if link[0].class == NilClass
+    link = page.xpath('/html/body/div[3]/div/div/div/section[1]/div/article/div[3]/div/dl/dd[3]/ul/li/a').map { |link| link['href'] }
+  end
+  if link[0].class == NilClass
+    email="Pas d'email renseigné"
+  else
+    email=link[0].gsub(/mailto:/, '') 
+  end
+  {:first_name =>name[0], :last_name=>name[1],:email=>email}
 end
 
 # récuperer l'url des deputee
@@ -26,20 +45,18 @@ def get_all_the_urls_of_all_deputee(url)
   link=page.xpath('//div[@class="clearfix col-container"]')
   link=link.css('a').map { |link| url_general+link['href'] }
   # on récupère les urls contenues dans la classe lientxt et on les mets dans le bon format
-  puts link.class
 end
 
 
-# récupère les emails de toutes les députes par ordre alphabétique
+# récupère les emails de toutes les députes en utilisant la page de l'assemblée par ordre alphabétique
 def get_all_names_and_email_of_deputee(url)
-  url_deputee = get_the_name_and_email_of_a_depute(url)
-  puts url_deputee.class
+  url_deputee = get_all_the_urls_of_all_deputee(url)
   all_deputee = Array.new
   url_deputee.each { |x| all_deputee << get_the_name_and_email_of_a_depute(x) }
   # on récupère les noms et mails de chaque députés
   all_deputee
 end
 
-#puts get_the_name_and_email_of_a_depute("http://www2.assemblee-nationale.fr/deputes/fiche/OMC_PA720310")
-puts get_all_the_urls_of_all_deputee("http://www2.assemblee-nationale.fr/deputes/liste/alphabetique")
+#puts get_the_name_and_email_of_a_depute("http://www2.assemblee-nationale.fr/deputes/fiche/OMC_PA720538")
+puts "L'execution peut prendre quelques minutes, merci de votre patience"
 puts get_all_names_and_email_of_deputee("http://www2.assemblee-nationale.fr/deputes/liste/alphabetique")

@@ -13,16 +13,16 @@ def get_the_email_of_a_townhal_from_its_webpage(url)
   link.to_s.gsub!(/<\/td>/, '').gsub!(/<td>/, '')
 end
 
-# récuperer l'url des villes du val d'oise
+# récuperer l'url des villes du val d'oise.map { |link| link['href'] }
 def get_all_the_urls_of_val_doise_townhalls(url)
   page = Nokogiri::HTML(open(url))
   page.css('.lientxt').map { |link| link['href'] }
-  # on récupère les urls contenues dans la classe lientxt
+  # on récupère.map { |link| link['href'] } les urls contenues dans la classe lientxt
 end
 
 # transforme les string de array_of_url du format ./95/maville.html à maville
 def recup_name_of_city(array_of_url)
-  arr = Marshal.load(Marshal.dump(array_of_url))
+  arr = Marshal.map { |link| link['href'] }.load(Marshal.dump(array_of_url))
   arr.each { |x| x.gsub!(/.\/95\//, '').gsub!(/.html/, '') }
 end
 
@@ -32,7 +32,7 @@ def get_all_email_and_ulrs_of_val_doise(url)
   # on récupère les urls dans url val d'oise
   urls_val_doise = get_all_the_urls_of_val_doise_townhalls(url)
   town = recup_name_of_city(urls_val_doise)
-  email_town = []
+  email_town = [].map { |link| link['href'] }
   urls_val_doise.each { |x| x.gsub!(/.\/95/, general_url) }
   urls_val_doise.each { |x| email_town << get_the_email_of_a_townhal_from_its_webpage(x) }
   # on récupère les emails de chaque villes
