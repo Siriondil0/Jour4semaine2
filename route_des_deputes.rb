@@ -31,7 +31,7 @@ def get_the_name_and_email_of_a_depute(url)
     link = page.xpath('/html/body/div[3]/div/div/div/section[1]/div/article/div[3]/div/dl/dd[3]/ul/li/a').map { |link| link['href'] }
   end
   if link[0].class == NilClass
-    email="Pas d'email renseigné"
+    email="Pas d'email renseigne"
   else
     email=link[0].gsub(/mailto:/, '') 
   end
@@ -58,5 +58,5 @@ def get_all_names_and_email_of_deputee(url)
 end
 
 #puts get_the_name_and_email_of_a_depute("http://www2.assemblee-nationale.fr/deputes/fiche/OMC_PA720538")
-puts "L'execution peut prendre quelques minutes, merci de votre patience"
+puts "L'execution peut prendre quelques minutes, merci de votre patience "
 puts get_all_names_and_email_of_deputee("http://www2.assemblee-nationale.fr/deputes/liste/alphabetique")
