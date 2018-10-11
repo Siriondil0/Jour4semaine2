@@ -42,8 +42,8 @@ end
 def get_all_the_urls_of_all_deputee(url)
   url_general="http://www2.assemblee-nationale.fr"
   page = Nokogiri::HTML(open(url))
-  #on récupère le contenu de la classe clearfix col-container (dont une sous partie contient les liens)
-  link = page.xpath('//div[@id="clearfix col-container"]')
+  #on récupère le contenu de la classe clearfix col-container (qui est un tableau contenant des liens)
+  link = page.xpath('//div[@class="clearfix col-container"]')
   # on récupère les urls contenues dans les liens du tableau  et on les mets dans le bon format
   link = link.css('a').map { |link| url_general + link['href'] }
 end
@@ -60,4 +60,3 @@ end
 
 puts "L'execution peut prendre quelques minutes, merci de votre patience "
 puts get_all_names_and_email_of_deputee("http://www2.assemblee-nationale.fr/deputes/liste/alphabetique")
-
